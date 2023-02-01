@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import random
 
+# Construct training set and test set
 def get_k_fold_data(k,i,x,y):
     assert k>1
     fold_size=x.shape[0]//k
@@ -18,6 +19,7 @@ def get_k_fold_data(k,i,x,y):
             y_train=torch.cat((y_train,y_part),dim=0)
     return x_train,y_train,x_valid,y_valid
 
+# Construct training sample pairs
 def SampleParis(label,paris):
     paris_list=[0]*paris
     for i in range(paris):

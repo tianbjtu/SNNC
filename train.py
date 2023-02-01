@@ -20,13 +20,11 @@ from deal_data import SampleParis
 from deal_data import SiameseNetworkDataset2
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-context2=np.load('/home/xule/alldata/HCP2/FC.npy')
-context1=np.load('/home/xule/alldata/HCP2/age.npy',encoding='latin1')
 
-sample_num = 600
 
 def train(net, train_features, test_features, train_label, test_label, train_sample, train_sample_paris_list):
-    siamese_dataset_train = SiameseNetworkDataset2(imageFolderDataset=train_features, imageFolderDataset2=train_label,
+    siamese_dataset_train = SiameseNetworkDataset2(imageFolderDataset=train_features,
+                                                   imageFolderDataset2=train_label,
                                                    sample=train_sample,
                                                    sample_paris_list=train_sample_paris_list)
 
@@ -40,6 +38,7 @@ def train(net, train_features, test_features, train_label, test_label, train_sam
     loss = torch.nn.MSELoss()
     loss = loss.to(device)
 
+    # train model
     for epoch in range(100):
         for i, data in enumerate(train_dataloader, 0):
             person1, person2, label1, label2 = data
@@ -62,6 +61,7 @@ def train(net, train_features, test_features, train_label, test_label, train_sam
             if i == 0:
                 train_ls.append(loss_age.item())
 
+    # test model
     with torch.no_grad():
         for j in range(len(test_label)):
             person1 = test_features[j]
@@ -95,12 +95,19 @@ def train(net, train_features, test_features, train_label, test_label, train_sam
     return train_ls, pre_age_dist, rea_age_dist
 
 
+# context2=np.load('/home/xule/alldata/HCP2/FC.npy')
+# context1=np.load('/home/xule/alldata/HCP2/age.npy',encoding='latin1')
+context2=np.load('D:/alldata/HCP2/FC.npy')
+context1=np.load('D:/alldata/HCP2/age.npy',encoding='latin1')
+sample_num = 600
+
 corr_gust_list=[]
 corr_gust_mark_list=[]
 mse_list=[]
 rmse_list=[]
 mae_list=[]
 
+# 10 rounds of 10-fold cross-validation
 for lab in range(10):
     sample_list = [i for i in range(len(context1))]
     sample_list = random.sample(sample_list, sample_num)
@@ -128,16 +135,15 @@ for lab in range(10):
     print('r:', corr_gust)
     corr_gust_mark = r2_score(re2, pr2)
     print('r2:', corr_gust_mark)
-
-    corr_gust_list.append(corr_gust)
-    corr_gust_mark_list.append(corr_gust_mark)
-
     mse = mean_squared_error(re2, pr2)
     print('MSE:', mse)
     rmse = sqrt(mse)
     print('RMSE：', rmse)
     mae = mean_absolute_error(re2, pr2)
     print('MAE：', mae)
+
+    corr_gust_list.append(corr_gust)
+    corr_gust_mark_list.append(corr_gust_mark)
     mse_list.append(mse)
     rmse_list.append(rmse)
     mae_list.append(mae)
