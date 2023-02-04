@@ -95,10 +95,9 @@ def train(net, train_features, test_features, train_label, test_label, train_sam
     return train_ls, pre_age_dist, rea_age_dist
 
 
-# context2=np.load('/home/xule/alldata/HCP2/FC.npy')
-# context1=np.load('/home/xule/alldata/HCP2/age.npy',encoding='latin1')
-context2=np.load('D:/alldata/HCP2/FC.npy')
-context1=np.load('D:/alldata/HCP2/age.npy',encoding='latin1')
+context2=np.load('/home/xule/alldata/HCP2/FC.npy')
+context1=np.load('/home/xule/alldata/HCP2/age.npy',encoding='latin1')
+
 sample_num = 600
 
 corr_gust_list=[]
